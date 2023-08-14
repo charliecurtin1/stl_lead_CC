@@ -1,0 +1,58 @@
+---
+title: "stl_lead"
+format: html
+editor: visual
+fig-width: 5
+fig-height: 5
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Day 1 Tasks
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+read in data
+
+```{r}
+stl_lead <- read_csv(here::here("data", 
+                                "stl_lead.csv")) %>% 
+  clean_names() %>% 
+  dplyr::mutate(prop_white = white / total_pop) # adds new column (new column name = operation)
+```
+
+```{r}
+stl_lead_prop <- stl_lead %>% 
+  dplyr::mutate(prop_white = white / total_pop * 100)
+
+names(stl_lead_prop)
+```
+
+```{r}
+stl_lead_plot <- ggplot(data = stl_lead_prop, 
+       aes(x = prop_white,
+           y = pct_elevated)) +
+  geom_point(alpha = .5)
+
+ggsave(here::here("figs", "pct_elevated_pop_white.png"),
+       height = 6,
+       width = 5)
+```
+
+```{r}
+stl_lead_plot
+```
+
+This scatterplot shows percentage white of each census tract on the x-axis and percentage elevated blood lead levels on the y-axis. As percentage white increases, percentage elevated blood levels tends to decrease.
+
+```{r}
+ggplot(data = stl_lead_prop,
+       aes(x = pct_elevated)) +
+  geom_histogram(fill = "purple", color = "green") +
+  theme_dark()
+
+ggsave(here::here("figs", "pct_elevated_histogram.jpg"))
+```
